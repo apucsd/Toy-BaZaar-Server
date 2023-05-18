@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -27,12 +27,26 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const toyCollection = client.db("toyDB").collection("toys");
-
+    app.put("/toys/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateToy = req.body;
+      const updateDoc = {
+        $set: {
+          price: updateToy.price,
+          quantity: updateToy.quantity,
+          details: updateToy.details,
+        },
+      };
+      const result = await toyCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
     app.post("/toys", async (req, res) => {
       const data = req.body;
       const result = await toyCollection.insertOne(data);
       res.send(result);
     });
+
     app.get("/toys", async (req, res) => {
       const email = req.query.email;
       if (email) {
