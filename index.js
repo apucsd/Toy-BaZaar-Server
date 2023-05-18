@@ -34,9 +34,19 @@ async function run() {
       res.send(result);
     });
     app.get("/toys", async (req, res) => {
+      const email = req.query.email;
+      if (email) {
+        const filter = { sellerEmail: email };
+        const result = await toyCollection.find(filter).toArray();
+        return res.send(result);
+      }
       const result = await toyCollection.find().toArray();
       res.send(result);
     });
+    // app.get("/toys", (req, res) => {
+    //   const email = req.query.email;
+    //   console.log(email);
+    // });
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
