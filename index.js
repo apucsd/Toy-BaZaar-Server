@@ -27,6 +27,34 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const toyCollection = client.db("toyDB").collection("toys");
+
+    ///////////use index search
+    const indexKey = { toyName: 1 };
+    const indexOption = { toyName: "toysName" };
+    const result = await toyCollection.createIndex(indexKey, indexOption);
+
+    app.get("/toys/search/:text", async (req, res) => {
+      console.log(req.params);
+      const text = req.params.text;
+      const result = await toyCollection
+        .find({
+          $and: [
+            {
+              toyName: { $regex: text, $options: "i" },
+            },
+          ],
+        })
+        .toArray();
+      res.send(result);
+    });
+
+    app.delete("/toys/:id", async (req, res) => {
+      const id = req.params.id;
+      //   console.log(id);
+      const query = { _id: new ObjectId(id) };
+      const result = await toyCollection.deleteOne(query);
+      res.send(result);
+    });
     app.put("/toys/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
@@ -57,10 +85,7 @@ async function run() {
       const result = await toyCollection.find().toArray();
       res.send(result);
     });
-    // app.get("/toys", (req, res) => {
-    //   const email = req.query.email;
-    //   console.log(email);
-    // });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
