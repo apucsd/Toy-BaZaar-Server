@@ -11,10 +11,10 @@ app.use(express.json());
 
 ///////////////////
 // cors problem
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   next();
+// });
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.pyjfh6u.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -87,12 +87,20 @@ async function run() {
     });
 
     app.get("/toys", async (req, res) => {
+      const limit = parseInt(req.query.limit);
+      if (limit) {
+        const result = await toyCollection.find().limit(limit).toArray();
+        return res.send(result);
+      }
       const email = req.query.email;
+      // console.log(limit);
       if (email) {
         const filter = { sellerEmail: email };
         const result = await toyCollection.find(filter).toArray();
         return res.send(result);
       }
+
+      console.log(limit);
       const result = await toyCollection.find().toArray();
       res.send(result);
     });
