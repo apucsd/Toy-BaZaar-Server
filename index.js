@@ -88,19 +88,33 @@ async function run() {
 
     app.get("/toys", async (req, res) => {
       const limit = parseInt(req.query.limit);
+
+      // sent data using limit params
       if (limit) {
         const result = await toyCollection.find().limit(limit).toArray();
         return res.send(result);
       }
       const email = req.query.email;
       // console.log(limit);
+      // sent data using email params
       if (email) {
         const filter = { sellerEmail: email };
         const result = await toyCollection.find(filter).toArray();
         return res.send(result);
       }
 
-      console.log(limit);
+      // sent data using ass des
+      const sortBy = req.query.sortBy;
+      if (sortBy == "ascending") {
+        const result = await toyCollection.find().sort({ price: 1 }).toArray();
+        return res.send(result);
+      }
+      if (sortBy == "descending") {
+        const result = await toyCollection.find().sort({ price: -1 }).toArray();
+        return res.send(result);
+      }
+
+      // console.log(limit);
       const result = await toyCollection.find().toArray();
       res.send(result);
     });
