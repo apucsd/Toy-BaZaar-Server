@@ -29,7 +29,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    // await client.connect();
+    client.connect();
     const toyCollection = client.db("toyDB").collection("toys");
 
     ///////////use index search
@@ -70,7 +70,6 @@ async function run() {
         return res.send(result);
       }
       if (email && sortBy == "descending") {
-        console.log("hitting decent");
         const result = await toyCollection
           .find({ sellerEmail: email })
           .sort({ price: -1 })
