@@ -103,20 +103,29 @@ async function run() {
         return res.send(result);
       }
 
-      // sent data using ass des
-      const sortBy = req.query.sortBy;
-      if (sortBy == "ascending") {
-        const result = await toyCollection.find().sort({ price: 1 }).toArray();
-        return res.send(result);
-      }
-      if (sortBy == "descending") {
-        const result = await toyCollection.find().sort({ price: -1 }).toArray();
-        return res.send(result);
-      }
-
       // console.log(limit);
       const result = await toyCollection.find().toArray();
       res.send(result);
+    });
+    app.get("/user/toys", async (req, res) => {
+      // sent data using ass des
+      const sortBy = req.query.sortBy;
+      const email = req.query.email;
+      if (email && sortBy == "ascending") {
+        const result = await toyCollection
+          .find({ sellerEmail: email })
+          .sort({ price: 1 })
+          .toArray();
+        return res.send(result);
+      }
+      if (email && sortBy == "descending") {
+        console.log("hitting decent");
+        const result = await toyCollection
+          .find({ sellerEmail: email })
+          .sort({ price: -1 })
+          .toArray();
+        return res.send(result);
+      }
     });
 
     // Send a ping to confirm a successful connection
