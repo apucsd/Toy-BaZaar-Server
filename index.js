@@ -31,13 +31,13 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    client.connect();
+    // client.connect();
     const toyCollection = client.db("toyDB").collection("toys");
 
     ///////////use index search
-    const indexKey = { toyName: 1 };
-    const indexOption = { toyName: "toysName" };
-    const result = await toyCollection.createIndex(indexKey, indexOption);
+    // const indexKey = { toyName: 1 };
+    // const indexOption = { toyName: "toysName" };
+    // const result = await toyCollection.createIndex(indexKey, indexOption);
 
     app.get("/toys", async (req, res) => {
       const limit = parseInt(req.query.limit);
